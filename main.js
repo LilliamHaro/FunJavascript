@@ -1,12 +1,10 @@
-// setup canvas
+
 
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
 
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
-
-// function to generate random number
 
 function random(min,max) {
   var num = Math.floor(Math.random()*(max-min)) + min;
@@ -21,9 +19,9 @@ function Shape(x,y,velX,velY,exists) {
 	this.exists=exists;
 }
 
-function Ball(x,y,velX,velY,exists,color,size)
-	Shape.call(this,x,y,velX,velY,exists)
-{
+function Ball(x,y,velX,velY,exists,color,size){
+	Shape.call(this,x,y,velX,velY,exists);
+
 	this.color=color;
 	this.size=size;
 }
@@ -72,10 +70,10 @@ Ball.prototype.collisionDetect = function() {
   }
 }
 
-function EvilCircle(x,y,exists)
+function EvilCircle(x,y,exists){
 Shape.call(this,x,y,exists);
-{
-	this.color =color;
+
+	this.color ='white';
 	this.size =10;
 	this.velX =20;
 	this.velY =20;
@@ -90,7 +88,7 @@ EvilCircle.prototype.draw = function () {
 	ctx.strokeStyle=this.color;
 	ctx.lineWidth=3;
 	ctx.arc(this.x,this.y,this.size,0,2*Math.PI);
-	ctx.strock();
+	ctx.stroke();
 }
 
 EvilCircle.prototype.checkBounds = function() {
@@ -111,7 +109,7 @@ EvilCircle.prototype.checkBounds = function() {
   }
 };
 
-EvilCircle.prototype.setControls(){
+EvilCircle.prototype.setControls= function(){
 var _this = this;
 window.onkeydown = function(e) {
     if (e.keyCode === 65) {
@@ -128,7 +126,7 @@ window.onkeydown = function(e) {
 
 EvilCircle.prototype.collisionDetect = function() {
   for (var j = 0; j < balls.length; j++) {
-    if (ball[i].exists) {
+    if (balls[j].exists) {
       var dx = this.x - balls[j].x;
       var dy = this.y - balls[j].y;
       var distance = Math.sqrt(dx * dx + dy * dy);
@@ -155,15 +153,16 @@ function loop() {
       random(0,height),
       random(-7,7),
       random(-7,7),
-      'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-      random(10,20)
-	  true;
+      true,
+	  'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
+	  random(10,20)
+
     );
     balls.push(ball);
   }
 
   for (var i = 0; i < balls.length; i++) {
-	  if(ball[i].exists){
+	  if(balls[i].exists){
       balls[i].draw();
 	  balls[i].update();
 	  balls[i].collisionDetect();

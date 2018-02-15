@@ -30,77 +30,11 @@ function Ball(x,y,velX,velY,exists,color,size)
 Ball.prototype = Object.create(Shape.prototype);
 Ball.prototype.constructor = Ball;
 
-function EvilCircle(x,y,exists,color,size,velX,velY)
-Shape.call(this,x,y,exists)
-{
-	this.color =color;
-	this.size =size;
-	this.velX =velX;
-	this.velY =velY;
-}
-EvilCircle.prototype=Object.create(Shape.prototype);
-EvilCircle.constructor=EvilCircle;
-
-
-EvilCircle.prototype.draw = function () {
-	ctx.beginPath();
-		ctx.strokeStyle=this.color;
-		ctx.lineWidth=3;
-		ctx.arc(this.x,this.y,this.size,0,2*Math.PI);
-		ctx.strock();
-}
-
 Ball.prototype.draw = function () {
 		ctx.beginPath();
 		ctx.fillStyle=this.color;
 		ctx.arc(this.x,this.y,this.size,0,2*Math.PI);
 		ctx.fill();
-}
-EvilCircle.prototype.checkBounds = function() {
-  if ((this.x + this.size) >= width) {
-    this.x = -(this.size);
-  }
-
-  if ((this.x - this.size) <= 0) {
-    this.x = -(this.size);
-  }
-
-  if ((this.y + this.size) >= height) {
-    this.y = -(this.size);
-  }
-
-  if ((this.y - this.size) <= 0) {
-    this.y = -(this.size);
-  }
-}
-
-EvilCircle.prototype.setControls(){
-var _this = this;
-window.onkeydown = function(e) {
-    if (e.keyCode === 65) {
-      _this.x -= _this.velX;
-    } else if (e.keyCode === 68) {
-      _this.x += _this.velX;
-    } else if (e.keyCode === 87) {
-      _this.y -= _this.velY;
-    } else if (e.keyCode === 83) {
-      _this.y += _this.velY;
-    }
-  }
-}
-
-EvilCircle.prototype.collisionDetect = function() {
-  for (var j = 0; j < balls.length; j++) {
-    if (ball[i].exists) {
-      var dx = this.x - balls[j].x;
-      var dy = this.y - balls[j].y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < this.size + balls[j].size) {
-        balls[j].exists = this.exists = false;
-      }
-    }
-  }
 }
 
 Ball.prototype.update = function() {
@@ -138,21 +72,82 @@ Ball.prototype.collisionDetect = function() {
   }
 }
 
+function EvilCircle(x,y,exists)
+Shape.call(this,x,y,exists);
+{
+	this.color =color;
+	this.size =10;
+	this.velX =20;
+	this.velY =20;
+}
+
+EvilCircle.prototype=Object.create(Shape.prototype);
+EvilCircle.prototype.constructor=EvilCircle;
+
+
+EvilCircle.prototype.draw = function () {
+	ctx.beginPath();
+	ctx.strokeStyle=this.color;
+	ctx.lineWidth=3;
+	ctx.arc(this.x,this.y,this.size,0,2*Math.PI);
+	ctx.strock();
+}
+
+EvilCircle.prototype.checkBounds = function() {
+  if ((this.x + this.size) >= width) {
+    this.x -= this.size;
+  }
+
+  if ((this.x - this.size) <= 0) {
+    this.x += this.size;
+  }
+
+  if ((this.y + this.size) >= height) {
+    this.y -= this.size;
+  }
+
+  if ((this.y - this.size) <= 0) {
+    this.y += this.size;
+  }
+};
+
+EvilCircle.prototype.setControls(){
+var _this = this;
+window.onkeydown = function(e) {
+    if (e.keyCode === 65) {
+      _this.x -= _this.velX;
+    } else if (e.keyCode === 68) {
+      _this.x += _this.velX;
+    } else if (e.keyCode === 87) {
+      _this.y -= _this.velY;
+    } else if (e.keyCode === 83) {
+      _this.y += _this.velY;
+    }
+  };
+};
+
+EvilCircle.prototype.collisionDetect = function() {
+  for (var j = 0; j < balls.length; j++) {
+    if (ball[i].exists) {
+      var dx = this.x - balls[j].x;
+      var dy = this.y - balls[j].y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.size + balls[j].size) {
+        balls[j].exists = false;
+      }
+    }
+  }
+}
+
 
 var balls=[];
+var evilCircle = new EvilCircle(random(0,width), random(0,height),true);
+evilCircle.setControls();
 
 function loop() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
   ctx.fillRect(0, 0, width, height);
-  var evilCircle = new EvilCircle(
-  20,
-  20,
-  true,
-  'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-  20,
-  random(-7,7),
-  random(-7,7)
-  );
   
   while (balls.length < 25) {
     var ball = new Ball(
@@ -174,7 +169,9 @@ function loop() {
 	  balls[i].collisionDetect();
 	  }
   }
-
+  evilCircle.draw();
+  evilCircle.checkBounds();
+  evilCircle.collisionDetect();
   requestAnimationFrame(loop);
 }
 loop();
